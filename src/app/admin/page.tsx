@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getAllNodeIds, getNode } from "@/lib/story";
 import { loadProgress, resetProgress } from "@/lib/progress";
-import type { PlayerProgress, StoryNode } from "@/lib/types";
+import type { PlayerProgress, Story, StoryNode } from "@/lib/types";
 
 const STORAGE_KEY_PREFIX = "karaoke_progress_";
 
@@ -20,20 +19,33 @@ function getKnownPlayers(): string[] {
 }
 
 export default function AdminPage() {
+  const [story, setStory] = useState<Story | null>(null);
   const [players, setPlayers] = useState<string[]>([]);
   const [selected, setSelected] = useState<PlayerProgress | null>(null);
   const [selectedNode, setSelectedNode] = useState<StoryNode | null>(null);
   const [jumpTarget, setJumpTarget] = useState("");
-  const nodeIds = getAllNodeIds();
 
   useEffect(() => {
+    fetch("/api/story")
+      .then((r) => r.json())
+      .then(setStory);
     setPlayers(getKnownPlayers());
   }, []);
+
+  if (!story) {
+    return (
+      <main className="flex min-h-screen items-center justify-center">
+        <p className="text-stone-500">Loading...</p>
+      </main>
+    );
+  }
+
+  const nodeIds = Object.keys(story);
 
   function selectPlayer(name: string) {
     const p = loadProgress(name);
     setSelected(p);
-    setSelectedNode(getNode(p.currentNode));
+    setSelectedNode(story![p.currentNode] ?? null);
   }
 
   function handleReset(player: string) {
@@ -45,8 +57,8 @@ export default function AdminPage() {
   }
 
   function handleJump() {
-    if (!selected || !jumpTarget) return;
-    const node = getNode(jumpTarget);
+    if (!selected || !jumpTarget || !story) return;
+    const node = story[jumpTarget];
     if (!node) return alert("Node not found");
     const updated: PlayerProgress = {
       ...selected,
@@ -164,7 +176,7 @@ export default function AdminPage() {
         </h2>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {nodeIds.map((id) => {
-            const n = getNode(id);
+            const n = story[id];
             return (
               <div
                 key={id}

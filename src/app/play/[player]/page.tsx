@@ -1,9 +1,8 @@
 "use client";
 
-import { use, useEffect, useState, useCallback } from "react";
-import { getNode } from "@/lib/story";
+import { use, useEffect, useState, useCallback, useRef } from "react";
 import { loadProgress, saveProgress } from "@/lib/progress";
-import type { PlayerProgress, StoryNode } from "@/lib/types";
+import type { PlayerProgress, StoryNode, Story } from "@/lib/types";
 
 export default function PlayPage({
   params,
@@ -13,20 +12,26 @@ export default function PlayPage({
   const { player } = use(params);
   const decodedPlayer = decodeURIComponent(player);
 
+  const storyRef = useRef<Story | null>(null);
   const [progress, setProgress] = useState<PlayerProgress | null>(null);
   const [node, setNode] = useState<StoryNode | null>(null);
   const [fadeIn, setFadeIn] = useState(false);
 
   useEffect(() => {
-    const p = loadProgress(decodedPlayer);
-    setProgress(p);
-    setNode(getNode(p.currentNode));
-    setTimeout(() => setFadeIn(true), 50);
+    fetch("/api/story")
+      .then((r) => r.json())
+      .then((story: Story) => {
+        storyRef.current = story;
+        const p = loadProgress(decodedPlayer);
+        setProgress(p);
+        setNode(story[p.currentNode] ?? null);
+        setTimeout(() => setFadeIn(true), 50);
+      });
   }, [decodedPlayer]);
 
   const handleChoice = useCallback(
     (nextNodeId: string) => {
-      if (!progress) return;
+      if (!progress || !storyRef.current) return;
       setFadeIn(false);
       setTimeout(() => {
         const updated: PlayerProgress = {
@@ -37,7 +42,7 @@ export default function PlayPage({
         };
         saveProgress(updated);
         setProgress(updated);
-        setNode(getNode(nextNodeId));
+        setNode(storyRef.current![nextNodeId] ?? null);
         setFadeIn(true);
       }, 300);
     },
