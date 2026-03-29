@@ -1,0 +1,41 @@
+{
+  "start": {
+    "text": "You wake in a candlelit room. A music box is playing softly on the nightstand.",
+    "choices": [
+      { "label": "Open the door", "next": "hallway" },
+      { "label": "Inspect the music box", "next": "music_box" }
+    ]
+  },
+  "hallway": {
+    "text": "The hallway is lined with framed sketches of the two of you. Warm light spills from the end of the corridor.",
+    "choices": [
+      { "label": "Follow the light", "next": "light_room" },
+      { "label": "Read the note on the floor", "next": "note_1" }
+    ]
+  },
+  "music_box": {
+    "text": "The music box plays a familiar melody. Inside, there's a tiny folded note that reads: \"Follow the song.\"",
+    "choices": [
+      { "label": "Step into the hallway", "next": "hallway" },
+      { "label": "Look under the bed", "next": "under_bed" }
+    ]
+  },
+  "note_1": {
+    "text": "The note reads: \"Every story has a secret door. This one is no different.\"",
+    "choices": [
+      { "label": "Continue down the hallway", "next": "light_room" }
+    ]
+  },
+  "under_bed": {
+    "text": "Under the bed you find a small velvet pouch. Inside is a golden key.",
+    "choices": [
+      { "label": "Take the key and head to the hallway", "next": "hallway" }
+    ]
+  },
+  "light_room": {
+    "text": "You step into a sunlit room filled with flowers. A table is set for two, and an envelope sits on your plate.",
+    "choices": [],
+    "isComingSoon": true,
+    "comingSoonMessage": "To be continued..."
+  }
+}
