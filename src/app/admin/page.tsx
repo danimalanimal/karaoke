@@ -65,7 +65,15 @@ export default function AdminPage() {
 
   return (
     <main className="min-h-screen p-8">
-      <h1 className="mb-6 text-2xl font-bold">Admin / DM Screen</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Admin / DM Screen</h1>
+        <a
+          href="/admin/editor"
+          className="rounded-lg bg-amber-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-amber-500"
+        >
+          Story Editor
+        </a>
+      </div>
 
       <section className="mb-8">
         <h2 className="mb-3 text-lg font-semibold text-stone-400">Players</h2>
